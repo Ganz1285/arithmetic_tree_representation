@@ -1,84 +1,119 @@
+"""
+Arithmetic Operations visualized in a tree
+
+This is the basic model of the project, updated as of 24/08/2023
+
+"""
+__author__ = "Selvaganapathy K"
+__email__ = "selvaganz1285@gmail.com"
+
+
 import re
 
-high_precedence=[]
-low_precedence=[]
+high_precedence = []
+low_precedence = []
+
 
 class operator:
-    def __init__(self,op,l,r):
-        self.op=op
-        self.l=l
-        self.r=r
-        self.result=None
-        self.left=None
-        self.right=None
+    """
+    Individual Nodeswhich carries an operator, left operand, right operand
+    and the right-left childs to parse through
+    """
 
+    def __init__(self, op, l, r):
+        """
+        Initial declaration of operator , left operand and right operand
+        """
+        self.op = op
+        self.l = l
+        self.r = r
+        self.result = None
+        self.left = None
+        self.right = None
 
     def representation(self):
-            print(str(self.l)+" "*(len(str(self.result)))+str(self.r))
-            print(" "*(len(str(self.l))-1)+"\\"+self.op.center((len(str(self.result)))," ")+"/")
-            print(" "*len(str(self.l))+str(self.result))
- 
-    
+        """
+        Basic representation function to visualize individual node
+
+        """
+        print(str(self.l) + " " * (len(str(self.result))) + str(self.r))
+        print(
+            " " * (len(str(self.l)) - 1)
+            + "\\"
+            + self.op.center((len(str(self.result))), " ")
+            + "/"
+        )
+        print(" " * len(str(self.l)) + str(self.result))
 
 
+def splitter(operation):
+    """
+    Splits the given input by parsing through and instantiates them as operator nodes.
 
-def splitter(s):
-    ext=""
-    recent=None
-    for i in range(len(s)):
-        if s[i].isdigit():
-            ext+=s[i]
+    """
+    ext = ""
+    recent = None
+    for i in range(len(operation)):
+        if operation[i].isdigit():
+            ext += operation[i]
         else:
-            op=s[i]
-            l=ext
-            r=""
-            for j in range(i+1,len(s)):
-                if s[j].isdigit():r+=s[j]
-                else:break
-            root=operator(op,l,r)
+            oper = operation[i]
+            left = ext
+            right = ""
+            for j in range(i + 1, len(operation)):
+                if operation[j].isdigit():
+                    right += operation[j]
+                else:
+                    break
+            root = operator(oper, left, right)
             if not recent:
-                recent=root
+                recent = root
             else:
-                root.left=recent
-                recent.right=root
-                recent=recent.right
-            
-            if op in "*/":high_precedence.append(root)
-            else:low_precedence.append(root)
-            ext=""
+                root.left = recent
+                recent.right = root
+                recent = recent.right
 
-def valid_operation(s):
+            if oper in "*/":
+                high_precedence.append(root)
+            else:
+                low_precedence.append(root)
+            ext = ""
+
+
+def valid_operation(operation):
     """
-    check if first and last elements are operands. not operators
+    check if given input is a valid Arithmetic Operation
     """
-    pattern=r"^[0-9][0-9+\-*/]*[0-9]$"
-    return re.match(pattern,s)
+    pattern = r"^[0-9][0-9+\-*/]*[0-9]$"
+    return re.match(pattern, operation)
+
 
 def parse():
-    for i in high_precedence+low_precedence:
-        i.result=int(eval(str(i.l)+i.op+str(i.r)))
-        i.representation()
-        if i.left:
-            i.left.r=i.result
-            i.left.right=i.right
-        if i.right:
-            i.right.l=i.result
-            i.right.left=i.left
-    print(i.result)
-        
+    """
+    Parses through the Arithmetic operation and executes
+        1. Follow precedence rule
+
+    """
+    for Ele in high_precedence + low_precedence:
+        Ele.result = int(eval(str(Ele.l) + Ele.op + str(Ele.r)))
+        Ele.representation()
+        if Ele.left:
+            Ele.left.r = Ele.result
+            Ele.left.right = Ele.right
+        if Ele.right:
+            Ele.right.l = Ele.result
+            Ele.right.left = Ele.left
+    print(Ele.result)
 
 
 def main():
-    s=input().strip()
-    if valid_operation(s):
-        print("VALID")
+    operation = input().strip()
+    if valid_operation(operation):
+        splitter(operation)
+        parse()
     else:
-        print("INVALID")
-
-    splitter(s)
-    parse()
+        print("INVALID OPERATION")
 
 
-
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
