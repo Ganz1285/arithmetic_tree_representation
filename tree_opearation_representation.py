@@ -1,6 +1,5 @@
 """
 Arithmetic Operations visualized in a tree
-
 This is the basic model of the project, updated as of 24/08/2023
 
 """
@@ -10,8 +9,10 @@ __email__ = "selvaganz1285@gmail.com"
 
 import re
 
+top_precedence = []
 high_precedence = []
 low_precedence = []
+arith_operators = ["+", "-", "*", "/"]
 
 
 class operator:
@@ -53,16 +54,25 @@ def splitter(operation):
     """
     ext = ""
     recent = None
+    op_bracks = 0
+    cl_bracks = 0
     for i in range(len(operation)):
         if operation[i].isdigit():
             ext += operation[i]
-        else:
+        elif operation[i] == "(":
+            op_bracks += 1
+        elif operation[i] == ")":
+            cl_bracks -= 1
+
+        elif operation[i] in arith_operators:
             oper = operation[i]
             left = ext
             right = ""
             for j in range(i + 1, len(operation)):
                 if operation[j].isdigit():
                     right += operation[j]
+                elif operation[j] in "()":
+                    pass
                 else:
                     break
             root = operator(oper, left, right)
@@ -73,7 +83,9 @@ def splitter(operation):
                 recent.right = root
                 recent = recent.right
 
-            if oper in "*/":
+            if op_bracks == cl_bracks:
+                top_precedence.append(root)
+            elif oper in "*/":
                 high_precedence.append(root)
             else:
                 low_precedence.append(root)
@@ -84,8 +96,21 @@ def valid_operation(operation):
     """
     check if given input is a valid Arithmetic Operation
     """
-    pattern = r"^[0-9][0-9+\-*/]*[0-9]$"
-    return re.match(pattern, operation)
+    pattern = r"^[()0-9][0-9+\-*/()]*[0-9()]$"
+    op = 0
+    cl = 0
+    cond = True if re.match(pattern, operation) else False
+    if "(" in operation:
+        for i in operation:
+            if i == "(":
+                op += 1
+            elif i == ")":
+                cl += 1
+                if cl > op:
+                    cond = False
+    if op != cl:
+        cond = False
+    return cond
 
 
 def parse():
@@ -94,7 +119,7 @@ def parse():
         1. Follow precedence rule
 
     """
-    for Ele in high_precedence + low_precedence:
+    for Ele in top_precedence + high_precedence + low_precedence:
         Ele.result = int(eval(str(Ele.l) + Ele.op + str(Ele.r)))
         Ele.representation()
         if Ele.left:
