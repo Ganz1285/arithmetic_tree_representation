@@ -83,7 +83,7 @@ def splitter(operation):
                 recent.right = root
                 recent = recent.right
 
-            if op_bracks == cl_bracks:
+            if op_bracks == cl_bracks and op_bracks!=0:
                 top_precedence.append(root)
             elif oper in "*/":
                 high_precedence.append(root)
