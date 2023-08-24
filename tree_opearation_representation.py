@@ -14,9 +14,9 @@ class operator:
 
 
     def representation(self):
-        print(str(self.l)+" "*(len(str(self.result)))+str(self.r))
-        print(" "*(len(str(self.l))-1)+"\\"+self.op.center((len(str(self.result)))," ")+"/")
-        print(" "*len(str(self.l))+str(self.result))
+            print(str(self.l)+" "*(len(str(self.result)))+str(self.r))
+            print(" "*(len(str(self.l))-1)+"\\"+self.op.center((len(str(self.result)))," ")+"/")
+            print(" "*len(str(self.l))+str(self.result))
  
     
 
@@ -55,23 +55,21 @@ def valid_operation(s):
     return re.match(pattern,s)
 
 def parse():
-
-    root=high_precedence[0] if high_precedence!=[] else low_precedence[0]
-    pend=None
-    if root.left:
-        pend=root.left
-    while root:
-        print(root.l,root.op,root.r)
-        root=root.right
-    while pend.left:pend=pend.left    
-    while pend:
-        print(pend.l,pend.op,pend.r)
-        pend=pend.right
-
+    for i in high_precedence+low_precedence:
+        i.result=int(eval(str(i.l)+i.op+str(i.r)))
+        i.representation()
+        if i.left:
+            i.left.r=i.result
+            i.left.right=i.right
+        if i.right:
+            i.right.l=i.result
+            i.right.left=i.left
+    print(i.result)
+        
 
 
 def main():
-    s=input()
+    s=input().strip()
     if valid_operation(s):
         print("VALID")
     else:
