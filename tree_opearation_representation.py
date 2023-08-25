@@ -9,9 +9,7 @@ __email__ = "selvaganz1285@gmail.com"
 
 import re
 
-top_precedence = []
-high_precedence = []
-low_precedence = []
+precedence = []
 arith_operators = ["+", "-", "*", "/"]
 
 
@@ -56,21 +54,36 @@ def splitter(operation):
     recent = None
     op_bracks = 0
     cl_bracks = 0
+    negatives = []
+    order = 0
     for i in range(len(operation)):
         if operation[i].isdigit():
-            ext += operation[i]
+            pass
         elif operation[i] == "(":
             op_bracks += 1
+            order += 1
         elif operation[i] == ")":
-            cl_bracks -= 1
-
-        elif operation[i] in arith_operators:
+            cl_bracks += 1
+            order -= 1
+        elif operation[i] in arith_operators and i not in negatives and i != 0:
             oper = operation[i]
-            left = ext
+            left = ""
+            for j in range(i - 1, -1, -1):
+                if operation[j].isdigit():
+                    left += operation[j]
+                elif operation[j] == "-":
+                    left += operation[j]
+                    break
+                else:
+                    break
+            left = left[::-1]
             right = ""
             for j in range(i + 1, len(operation)):
                 if operation[j].isdigit():
                     right += operation[j]
+                elif operation[j] == "-" and right == "":
+                    right += operation[j]
+                    negatives.append(j)
                 elif operation[j] in "()":
                     pass
                 else:
@@ -83,20 +96,20 @@ def splitter(operation):
                 recent.right = root
                 recent = recent.right
 
-            if op_bracks == cl_bracks and op_bracks!=0:
-                top_precedence.append(root)
-            elif oper in "*/":
-                high_precedence.append(root)
+            if oper in "*/":
+                precedence[order][0].append(root)
             else:
-                low_precedence.append(root)
+                precedence[order][1].append(root)
             ext = ""
+        elif operation[i] == "-" and i == 0:
+            ext += operation[i]
 
 
 def valid_operation(operation):
     """
     check if given input is a valid Arithmetic Operation
     """
-    pattern = r"^[()0-9][0-9+\-*/()]*[0-9()]$"
+    pattern = r"^[-()0-9][0-9+\-*/()]*[0-9()]$"
     op = 0
     cl = 0
     cond = True if re.match(pattern, operation) else False
@@ -119,20 +132,26 @@ def parse():
         1. Follow precedence rule
 
     """
-    for Ele in top_precedence + high_precedence + low_precedence:
-        Ele.result = int(eval(str(Ele.l) + Ele.op + str(Ele.r)))
-        Ele.representation()
-        if Ele.left:
-            Ele.left.r = Ele.result
-            Ele.left.right = Ele.right
-        if Ele.right:
-            Ele.right.l = Ele.result
-            Ele.right.left = Ele.left
-    print(Ele.result)
+
+    for parser in precedence[::-1]:
+        combine = parser[0] + parser[1]
+        if combine != []:
+            for Ele in combine:
+                Ele.result = int(eval(str(Ele.l) + Ele.op + str(Ele.r)))
+                Ele.representation()
+                if Ele.left:
+                    Ele.left.r = Ele.result
+                    Ele.left.right = Ele.right
+                if Ele.right:
+                    Ele.right.l = Ele.result
+                    Ele.right.left = Ele.left
+    print("Result:", Ele.result)
 
 
 def main():
-    operation = input().strip()
+    operation = input("Input Arithmetic Operation:").strip()
+    global precedence
+    precedence = [[[], []] for i in range(operation.count("(") + 1)]
     if valid_operation(operation):
         splitter(operation)
         parse()
