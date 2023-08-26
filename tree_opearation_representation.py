@@ -11,6 +11,7 @@ import re
 
 precedence = []
 arith_operators = ["+", "-", "*", "/"]
+st_ind_order = None
 
 
 class operator:
@@ -101,6 +102,9 @@ def splitter(operation):
             else:
                 precedence[order][1].append(root)
             ext = ""
+            global st_ind_order
+            if st_ind_order is None:
+                st_ind_order = root
         elif operation[i] == "-" and i == 0:
             ext += operation[i]
 
@@ -138,6 +142,18 @@ def parse():
         if combine != []:
             for Ele in combine:
                 Ele.result = int(eval(str(Ele.l) + Ele.op + str(Ele.r)))
+                x = st_ind_order
+                st = ""
+                while x:
+                    if st == "":
+                        st += str(x.l)
+                        st += x.op
+                        st += str(x.r)
+                    else:
+                        st += x.op
+                        st += str(x.r)
+                    x = x.right
+                print(st)
                 Ele.representation()
                 if Ele.left:
                     Ele.left.r = Ele.result
