@@ -6,7 +6,7 @@ This is the basic model of the project, updated as of 24/08/2023
 __author__ = "Selvaganapathy K"
 __email__ = "selvaganz1285@gmail.com"
 
-
+from termcolor import colored
 import re
 
 precedence = []
@@ -145,17 +145,25 @@ def parse():
                 x = st_ind_order
                 st = ""
                 while x:
+                    simple_st = ""
                     if st == "":
-                        st += str(x.l)
-                        st += " "
-                        st += x.op
-                        st += " "
-                        st += str(x.r)
+                        simple_st += str(x.l)
+                        simple_st += " "
+                        simple_st += x.op
+                        simple_st += " "
+                        simple_st += str(x.r)
                     else:
-                        st += " "
-                        st += x.op
-                        st += " "
-                        st += str(x.r)
+                        simple_st += " "
+                        simple_st += x.op
+                        simple_st += " "
+                        if x.right == Ele:
+                            simple_st += colored(str(x.r), "red")
+                        else:
+                            simple_st += colored(str(x.r))
+                    if x == Ele:
+                        st += colored(simple_st, "red")
+                    else:
+                        st += simple_st
                     x = x.right
                 print(st)
                 print("-" * len(st))
