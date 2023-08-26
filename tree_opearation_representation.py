@@ -136,7 +136,7 @@ def parse():
         1. Follow precedence rule
 
     """
-
+    global st_ind_order
     for parser in precedence[::-1]:
         combine = parser[0] + parser[1]
         if combine != []:
@@ -154,10 +154,16 @@ def parse():
                         st += str(x.r)
                     x = x.right
                 print(st)
+                print("-"*len(st))
                 Ele.representation()
+                print("-"*len(st))
                 if Ele.left:
                     Ele.left.r = Ele.result
                     Ele.left.right = Ele.right
+                else:
+                    if Ele.right:
+                        Ele.right.left=None
+                    st_ind_order=Ele.right
                 if Ele.right:
                     Ele.right.l = Ele.result
                     Ele.right.left = Ele.left
