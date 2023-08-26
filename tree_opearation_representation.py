@@ -76,6 +76,8 @@ def splitter(operation):
                 elif operation[j] == "-":
                     left += operation[j]
                     break
+                elif operation[j]==" ":
+                    pass
                 else:
                     break
             left = left[::-1]
@@ -86,7 +88,7 @@ def splitter(operation):
                 elif operation[j] == "-" and right == "":
                     right += operation[j]
                     negatives.append(j)
-                elif operation[j] in "()":
+                elif operation[j] in "() ":
                     pass
                 else:
                     break
@@ -114,7 +116,7 @@ def valid_operation(operation):
     """
     check if given input is a valid Arithmetic Operation
     """
-    pattern = r"^[-()0-9][0-9+\-*/()]*[0-9()]$"
+    pattern = r"^[-()0-9][0-9+\-*/() ]*[0-9()]$"
     op = 0
     cl = 0
     cond = True if re.match(pattern, operation) else False
@@ -148,15 +150,9 @@ def parse():
                 while x:
                     simple_st = ""
                     if st == "":
-                        simple_st += str(x.l)
-                        simple_st += " "
-                        simple_st += x.op
-                        simple_st += " "
-                        simple_st += str(x.r)
+                        simple_st += str(x.l)+" "+x.op+" "+str(x.r)
                     else:
-                        simple_st += " "
-                        simple_st += x.op
-                        simple_st += " "
+                        simple_st += " "+x.op+" "
                         if x.right == Ele:
                             simple_st += CRED + str(x.r) + CEND
                         else:
