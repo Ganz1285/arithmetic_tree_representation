@@ -147,23 +147,27 @@ def parse():
                 while x:
                     if st == "":
                         st += str(x.l)
+                        st += " "
                         st += x.op
+                        st += " "
                         st += str(x.r)
                     else:
+                        st += " "
                         st += x.op
+                        st += " "
                         st += str(x.r)
                     x = x.right
                 print(st)
-                print("-"*len(st))
+                print("-" * len(st))
                 Ele.representation()
-                print("-"*len(st))
+                print("-" * len(st))
                 if Ele.left:
                     Ele.left.r = Ele.result
                     Ele.left.right = Ele.right
                 else:
                     if Ele.right:
-                        Ele.right.left=None
-                    st_ind_order=Ele.right
+                        Ele.right.left = None
+                    st_ind_order = Ele.right
                 if Ele.right:
                     Ele.right.l = Ele.result
                     Ele.right.left = Ele.left
