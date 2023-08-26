@@ -6,12 +6,13 @@ This is the basic model of the project, updated as of 24/08/2023
 __author__ = "Selvaganapathy K"
 __email__ = "selvaganz1285@gmail.com"
 
-from termcolor import colored
 import re
 
 precedence = []
 arith_operators = ["+", "-", "*", "/"]
 st_ind_order = None
+CRED = "\033[91m"
+CEND = "\033[37m"
 
 
 class operator:
@@ -157,11 +158,11 @@ def parse():
                         simple_st += x.op
                         simple_st += " "
                         if x.right == Ele:
-                            simple_st += colored(str(x.r), "red")
+                            simple_st += CRED + str(x.r) + CEND
                         else:
-                            simple_st += colored(str(x.r))
+                            simple_st += str(x.r)
                     if x == Ele:
-                        st += colored(simple_st, "red")
+                        st += CRED + simple_st + CEND
                     else:
                         st += simple_st
                     x = x.right
