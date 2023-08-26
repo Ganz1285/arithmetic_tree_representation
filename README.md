@@ -11,9 +11,7 @@ To Represent a Mathematical Operation and flow of processes in a tree.
 
 ### Requirements
 
-Python packages required to run this program
-
-- termcolor
+- python 3.0
 
 
 
