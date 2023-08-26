@@ -37,11 +37,11 @@ class operator:
         Basic representation function to visualize individual node
 
         """
-        print(str(self.l) + " " * (len(str(self.result))) + str(self.r))
+        print(str(self.l) + self.op.center(len(str(self.result))) + str(self.r))
         print(
             " " * (len(str(self.l)) - 1)
             + "\\"
-            + self.op.center((len(str(self.result))), " ")
+            + " "*(len(str(self.result)))
             + "/"
         )
         print(" " * len(str(self.l)) + str(self.result))
