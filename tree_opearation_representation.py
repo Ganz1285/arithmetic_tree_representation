@@ -6,11 +6,13 @@ This is the basic model of the project, updated as of 24/08/2023
 __author__ = "Selvaganapathy K"
 __email__ = "selvaganz1285@gmail.com"
 
-
 import re
 
 precedence = []
 arith_operators = ["+", "-", "*", "/"]
+st_ind_order = None
+CRED = "\033[91m"
+CEND = "\033[37m"
 
 
 class operator:
@@ -35,11 +37,11 @@ class operator:
         Basic representation function to visualize individual node
 
         """
-        print(str(self.l) + " " * (len(str(self.result))) + str(self.r))
+        print(str(self.l) + self.op.center(len(str(self.result))) + str(self.r))
         print(
             " " * (len(str(self.l)) - 1)
             + "\\"
-            + self.op.center((len(str(self.result))), " ")
+            + " "*(len(str(self.result)))
             + "/"
         )
         print(" " * len(str(self.l)) + str(self.result))
@@ -74,6 +76,8 @@ def splitter(operation):
                 elif operation[j] == "-":
                     left += operation[j]
                     break
+                elif operation[j]==" ":
+                    pass
                 else:
                     break
             left = left[::-1]
@@ -84,7 +88,7 @@ def splitter(operation):
                 elif operation[j] == "-" and right == "":
                     right += operation[j]
                     negatives.append(j)
-                elif operation[j] in "()":
+                elif operation[j] in "() ":
                     pass
                 else:
                     break
@@ -101,6 +105,9 @@ def splitter(operation):
             else:
                 precedence[order][1].append(root)
             ext = ""
+            global st_ind_order
+            if st_ind_order is None:
+                st_ind_order = root
         elif operation[i] == "-" and i == 0:
             ext += operation[i]
 
@@ -109,7 +116,7 @@ def valid_operation(operation):
     """
     check if given input is a valid Arithmetic Operation
     """
-    pattern = r"^[-()0-9][0-9+\-*/()]*[0-9()]$"
+    pattern = r"^[-()0-9][0-9+\-*/() ]*[0-9()]$"
     op = 0
     cl = 0
     cond = True if re.match(pattern, operation) else False
@@ -132,16 +139,40 @@ def parse():
         1. Follow precedence rule
 
     """
-
+    global st_ind_order
     for parser in precedence[::-1]:
         combine = parser[0] + parser[1]
         if combine != []:
             for Ele in combine:
                 Ele.result = int(eval(str(Ele.l) + Ele.op + str(Ele.r)))
+                x = st_ind_order
+                st = ""
+                while x:
+                    simple_st = ""
+                    if st == "":
+                        simple_st += str(x.l)+" "+x.op+" "+str(x.r)
+                    else:
+                        simple_st += " "+x.op+" "
+                        if x.right == Ele:
+                            simple_st += CRED + str(x.r) + CEND
+                        else:
+                            simple_st += str(x.r)
+                    if x == Ele:
+                        st += CRED + simple_st + CEND
+                    else:
+                        st += simple_st
+                    x = x.right
+                print(st)
+                print("-" * len(st))
                 Ele.representation()
+                print("-" * len(st))
                 if Ele.left:
                     Ele.left.r = Ele.result
                     Ele.left.right = Ele.right
+                else:
+                    if Ele.right:
+                        Ele.right.left = None
+                    st_ind_order = Ele.right
                 if Ele.right:
                     Ele.right.l = Ele.result
                     Ele.right.left = Ele.left
